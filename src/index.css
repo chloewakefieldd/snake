@@ -1,6 +1,6 @@
 .square {
-    height: 5vh;
-    width: 5vh;
+    height: 5vw;
+    width: 5vw;
     float: left;
     box-shadow: 0px 0px 1px 1px #55222288;
 }
@@ -19,5 +19,6 @@
 
 .Container {
     margin: 0 auto;
-    width: 100vh;
+    /*width: 100vh;
+    /*display: none; /*REMOVE ME*/
 }
