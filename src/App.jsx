@@ -4,8 +4,6 @@ import Grid from "./grid"
 import Neural from "./neuralStuff"
 import Snake from "./snake"
 
-var snakeRows = []
-var snakeColumns = []
 var snakeLength = 0
 var foodColumn = 0
 var foodRow = 0
@@ -17,13 +15,13 @@ class Logic {
   init(grid) {
     Snake.setCurrentRow(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
     Snake.setCurrentColumn(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
-    snakeRows.push(Snake.getCurrentRow())
-    snakeColumns.push(Snake.getCurrentColumn())
+    Snake.pushSnakeRow(Snake.getCurrentRow())
+    Snake.pushSnakeColumn(Snake.getCurrentColumn())
     snakeLength += 1
     grid = this.createGrid(grid)
     /*this.keyPressed = this.keyPressed.bind(this);*/
     neural = new Neural();
-    Snake.setCurrentDirection(neural.decideMove(grid, Snake.currentDirection));
+    Snake.setCurrentDirection(neural.decideMove(grid));
     return grid
   }
 
@@ -35,7 +33,7 @@ class Logic {
   }
 
   step(grid) {
-    Snake.setCurrentDirection(neural.decideMove(grid, Snake.currentDirection));
+    Snake.setCurrentDirection(neural.decideMove(grid));
     this.updateHead(grid)
     this.updateTail(grid)
     return grid
@@ -52,8 +50,8 @@ class Logic {
       foodRow = Math.floor(Math.random() * Grid.getNumRows())
       foodColumn = Math.floor(Math.random() * Grid.getNumColumns())
       var isFoodPositionAvailable = true
-      for(var i = 0; i < snakeRows.length; i++) {
-        if (foodRow === snakeRows[i] && foodColumn === snakeColumns[i]) {
+      for(var i = 0; i < Snake.getSnakeRows().length; i++) {
+        if (foodRow === Snake.getSnakeRows()[i] && foodColumn === Snake.getSnakeColumns()[i]) {
           isFoodPositionAvailable = false
           break
         }
@@ -72,8 +70,8 @@ class Logic {
 
   updateHead(grid) {
     
-    for(var i = 0; i < snakeRows.length; i++) {
-      if (Grid.nextRow(Snake.getCurrentRow()) === snakeRows[i] && Grid.nextColumn(Snake.getCurrentColumn()) === snakeColumns[i]) {
+    for(var i = 0; i < Snake.getSnakeRows().length; i++) {
+      if (Grid.nextRow(Snake.getCurrentRow()) === Snake.getSnakeRows()[i] && Grid.nextColumn(Snake.getCurrentColumn()) === Snake.getSnakeColumns()[i]) {
         //window.location.reload();
       }
     }
@@ -81,20 +79,19 @@ class Logic {
     Snake.setCurrentRow(Grid.nextRow(Snake.getCurrentRow()));
     //console.log("currentRow: "+currentRow);
     Snake.setCurrentColumn(Grid.nextColumn(Snake.getCurrentColumn()));
-    snakeColumns.push(Snake.getCurrentColumn())
-    snakeRows.push(Snake.getCurrentRow())
+    Snake.pushSnakeColumn(Snake.getCurrentColumn());
+    Snake.pushSnakeRow(Snake.getCurrentRow());
     this.makeGridPosYellow(grid, this.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn()))
   }
 
   updateTail(grid) {
-    if (snakeRows.length > snakeLength && snakeColumns.length > snakeLength) {
+    if (Snake.getSnakeRows().length > snakeLength && Snake.getSnakeColumns().length > snakeLength) {
       if(Snake.getCurrentRow() === foodRow && Snake.getCurrentColumn() === foodColumn) {
         snakeLength += 1
         this.placeFoodItem(grid)
       } else {
-        this.makeGridPosEmpty(grid, this.getGridIndexOf(snakeRows[0], snakeColumns[0]))
-        snakeRows.splice(0, 1);
-        snakeColumns.splice(0, 1);
+        this.makeGridPosEmpty(grid, this.getGridIndexOf(Snake.getSnakeRows()[0], Snake.getSnakeColumns()[0]))
+        Snake.removeLastSquare();
       }
     }
   }
@@ -105,9 +102,7 @@ class Logic {
 
 
 
-  nextSquareIsOneSnakeSquareBehind() {
-    return (snakeRows[snakeRows.length - 2] === Grid.nextRow(Snake.getCurrentRow()) && snakeColumns[snakeColumns.length - 2] === Grid.nextColumn(Snake.getCurrentColumn())) ? true : false
-  }
+
 
 
 

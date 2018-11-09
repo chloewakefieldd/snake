@@ -1,3 +1,5 @@
+import Grid from "./grid"
+import Snake from "./snake"
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" }
 
 var weights;
@@ -14,7 +16,7 @@ export default class Neural {
     }
 
 
-    decideMove(grid, currentDirection) {
+    decideMove(grid) {
 
         
         this.randomiseWeights();
@@ -22,7 +24,16 @@ export default class Neural {
         // Returns direction with maximum weight
         var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
 
+
+
+        var tempCurrentDirection = Snake.getCurrentDirection();
+        Snake.setCurrentDirection(decidedMove);
+        decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : decidedMove
+
+
         return decidedMove;
+
+        /*return direction.RIGHT;*/
 
     }
 
@@ -50,7 +61,9 @@ export default class Neural {
     //   Reward for reaching food or punish for hitting snake
     //   Adjust weights
 
-
+    nextSquareIsOneSnakeSquareBehind() {
+        return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Grid.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Grid.nextColumn(Snake.getCurrentColumn())) ? true : false
+    }
 
 
 
