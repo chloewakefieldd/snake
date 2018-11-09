@@ -72,7 +72,7 @@ class Logic {
     
     for(var i = 0; i < Snake.getSnakeRows().length; i++) {
       if (Grid.nextRow(Snake.getCurrentRow()) === Snake.getSnakeRows()[i] && Grid.nextColumn(Snake.getCurrentColumn()) === Snake.getSnakeColumns()[i]) {
-        //window.location.reload();
+        window.location.reload();
       }
     }
     //console.log("currentRow: "+currentRow);
