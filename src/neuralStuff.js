@@ -1,6 +1,6 @@
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" }
 
-var weights = [];
+var weights;
 
 export default class Neural {
 
@@ -8,9 +8,7 @@ export default class Neural {
         
         log("start");
 
-        for(var i = 0; i < 4; i++) {
-            weights.push(zeroto0point99());
-        }
+        this.randomiseWeights();
 
         log(weights);
     }
@@ -18,9 +16,12 @@ export default class Neural {
 
     decideMove(grid, currentDirection) {
 
-        var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
+        
+        this.randomiseWeights();
 
         // Returns direction with maximum weight
+        var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
+
         return decidedMove;
 
     }
@@ -30,7 +31,12 @@ export default class Neural {
         log(grid);
     }
 
-    
+    randomiseWeights() {
+        weights = [];
+        for(var i = 0; i < 4; i++) {
+            weights.push(zeroto0point99());
+        }
+    }
 
 
 
