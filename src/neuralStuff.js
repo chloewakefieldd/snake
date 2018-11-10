@@ -1,4 +1,5 @@
 import Snake from "./snake"
+import Food from "./food"
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" }
 
 var weights;
@@ -50,7 +51,7 @@ export default class Neural {
 
     /*isFacingFood() {
         var facingFood = false;
-        if(Snake.ge() && Snake.nextRow())
+        if(Snake.nextColumn())
     }*/
 
 

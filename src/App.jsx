@@ -3,10 +3,10 @@ import "./index.css"
 import Grid from "./grid"
 import Neural from "./neuralStuff"
 import Snake from "./snake"
+import Food from "./food"
 
 var snakeLength = 0
-var foodColumn = 0
-var foodRow = 0
+
 
 var neural;
 
@@ -47,17 +47,17 @@ class Logic {
   placeFoodItem(grid) {
     var foodPlaced = false
     while (!foodPlaced) {
-      foodRow = Math.floor(Math.random() * Grid.getNumRows())
-      foodColumn = Math.floor(Math.random() * Grid.getNumColumns())
+      Food.setFoodRow(Math.floor(Math.random() * Grid.getNumRows()));
+      Food.setFoodColumn(Math.floor(Math.random() * Grid.getNumColumns()));
       var isFoodPositionAvailable = true
       for(var i = 0; i < Snake.getSnakeRows().length; i++) {
-        if (foodRow === Snake.getSnakeRows()[i] && foodColumn === Snake.getSnakeColumns()[i]) {
+        if (Food.getFoodRow() === Snake.getSnakeRows()[i] && Food.getFoodColumn() === Snake.getSnakeColumns()[i]) {
           isFoodPositionAvailable = false
           break
         }
       }
       if (isFoodPositionAvailable) {
-          var gridIndex = this.getGridIndexOf(foodRow, foodColumn)
+          var gridIndex = this.getGridIndexOf(Food.getFoodRow(), Food.getFoodColumn())
           grid[gridIndex] = 'food'
           foodPlaced = true;
       }
@@ -86,7 +86,7 @@ class Logic {
 
   updateTail(grid) {
     if (Snake.getSnakeRows().length > snakeLength && Snake.getSnakeColumns().length > snakeLength) {
-      if(Snake.getCurrentRow() === foodRow && Snake.getCurrentColumn() === foodColumn) {
+      if(Snake.getCurrentRow() === Food.getFoodRow() && Snake.getCurrentColumn() === Food.getFoodColumn()) {
         snakeLength += 1
         this.placeFoodItem(grid)
       } else {
