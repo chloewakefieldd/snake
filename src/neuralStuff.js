@@ -21,19 +21,32 @@ export default class Neural {
         
         this.randomiseWeights();
 
-        // Returns direction with maximum weight
+        // direction with maximum weight
         var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
 
 
 
-        var tempCurrentDirection = Snake.getCurrentDirection();
-        Snake.setCurrentDirection(decidedMove);
-        decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : decidedMove
+        var biggest = -Infinity;
+        var next_biggest = -Infinity;
+        
+        for (var i = 0, n = weights.length; i < n; ++i) {
+            var nr = +weights[i]; // convert to number first
+        
+            if (nr > biggest) {
+                next_biggest = biggest; // save previous biggest value
+                biggest = nr;
+            } else if (nr < biggest && nr > next_biggest) {
+                next_biggest = nr; // new second biggest value
+            }
+        }
 
+        // direction with second maximum weight
+        var backupMove = Object.keys(direction)[weights.indexOf(next_biggest)];
+
+        Snake.setCurrentDirection(decidedMove);
+        decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? backupMove : decidedMove
 
         return decidedMove;
-
-        /*return direction.RIGHT;*/
 
     }
 
