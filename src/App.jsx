@@ -71,14 +71,14 @@ class Logic {
   updateHead(grid) {
     
     for(var i = 0; i < Snake.getSnakeRows().length; i++) {
-      if (Grid.nextRow(Snake.getCurrentRow()) === Snake.getSnakeRows()[i] && Grid.nextColumn(Snake.getCurrentColumn()) === Snake.getSnakeColumns()[i]) {
+      if (Snake.nextRow(Snake.getCurrentRow()) === Snake.getSnakeRows()[i] && Snake.nextColumn(Snake.getCurrentColumn()) === Snake.getSnakeColumns()[i]) {
         window.location.reload();
       }
     }
     //console.log("currentRow: "+currentRow);
-    Snake.setCurrentRow(Grid.nextRow(Snake.getCurrentRow()));
+    Snake.setCurrentRow(Snake.nextRow(Snake.getCurrentRow()));
     //console.log("currentRow: "+currentRow);
-    Snake.setCurrentColumn(Grid.nextColumn(Snake.getCurrentColumn()));
+    Snake.setCurrentColumn(Snake.nextColumn(Snake.getCurrentColumn()));
     Snake.pushSnakeColumn(Snake.getCurrentColumn());
     Snake.pushSnakeRow(Snake.getCurrentRow());
     this.makeGridPosYellow(grid, this.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn()))

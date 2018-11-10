@@ -1,4 +1,3 @@
-import Grid from "./grid"
 import Snake from "./snake"
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" }
 
@@ -15,9 +14,7 @@ export default class Neural {
         log(weights);
     }
 
-
-    decideMove(grid) {
-
+    decideMove(grid) { 
         
         this.randomiseWeights();
 
@@ -51,6 +48,12 @@ export default class Neural {
     }
 
 
+    /*isFacingFood() {
+        var facingFood = false;
+        if(Snake.ge() && Snake.nextRow())
+    }*/
+
+
     showGrid(grid) {
         log(grid);
     }
@@ -75,7 +78,7 @@ export default class Neural {
     //   Adjust weights
 
     nextSquareIsOneSnakeSquareBehind() {
-        return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Grid.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Grid.nextColumn(Snake.getCurrentColumn())) ? true : false
+        return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Snake.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Snake.nextColumn(Snake.getCurrentColumn())) ? true : false
     }
 
 
