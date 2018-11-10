@@ -19,6 +19,38 @@ export default class Neural {
         
         this.randomiseWeights();
 
+
+
+
+
+
+
+
+
+
+        if(Food.getFoodColumn() > Snake.getCurrentColumn()) {
+            weights[3] = 1;
+        } else if(Food.getFoodColumn() < Snake.getCurrentColumn()) {
+            weights[2] = 1;
+        }
+
+        if(Food.getFoodRow() > Snake.getCurrentRow()) {
+            weights[1] = 1;
+        } else if(Food.getFoodRow() < Snake.getCurrentRow()) {
+            weights[0] = 1;
+        }
+
+
+
+
+
+        
+
+
+
+
+
+
         // direction with maximum weight
         var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
 
@@ -40,19 +72,15 @@ export default class Neural {
 
         // direction with second maximum weight
         var backupMove = Object.keys(direction)[weights.indexOf(next_biggest)];
-
+        
+        
+        // Don't allow snake to go back on itself - use backup move if highest weighting is backwards
         Snake.setCurrentDirection(decidedMove);
         decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? backupMove : decidedMove
 
         return decidedMove;
 
     }
-
-
-    /*isFacingFood() {
-        var facingFood = false;
-        if(Snake.nextColumn())
-    }*/
 
 
     showGrid(grid) {
