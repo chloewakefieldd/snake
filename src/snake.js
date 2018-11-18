@@ -1,17 +1,23 @@
 import Grid from "./grid"
 
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" };
-var currentRow = 0;
-var currentColumn = 0;
+var currentRow = null;
+var currentColumn = null;
 var currentDirection = null;
-var snakeLength = 0;
+var snakeLength = null;
 var snakeRows = [];
 var snakeColumns = [];
 
 export default class Snake {
 
     static reset() {
-      
+      direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" };
+      currentRow = null;
+      currentColumn = null;
+      currentDirection = null;
+      snakeLength = null;
+      snakeRows = [];
+      snakeColumns = [];
     }
 
     static getCurrentDirection() { return currentDirection; }
