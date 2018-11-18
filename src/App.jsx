@@ -5,46 +5,45 @@ import Neural from "./neuralStuff"
 import Snake from "./snake"
 import Food from "./food"
 
-var snakeLength = 0
-
-
-var neural;
-
 class Logic {
 
-  init(grid) {
-    Snake.setCurrentRow(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
-    Snake.setCurrentColumn(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
-    Snake.pushSnakeRow(Snake.getCurrentRow())
-    Snake.pushSnakeColumn(Snake.getCurrentColumn())
-    snakeLength += 1
-    grid = this.createGrid(grid)
-    /*this.keyPressed = this.keyPressed.bind(this);*/
-    neural = new Neural();
-    Snake.setCurrentDirection(neural.decideMove(grid));
+  static init(grid) {
+    Snake.setInitialLocation();
+    Snake.pushCurrentLocation();
+    Snake.setSnakeLength(1);
+    grid = Logic.createGrid(grid)
+    /*Logic.keyPressed = Logic.keyPressed.bind(this);*/
+    Snake.setCurrentDirection(Neural.decideMove(grid));
     return grid
   }
 
-  createGrid(grid) {
+  static resetEverything() {
+    window.location.reload();
+    //Snake.reset();
+    //Food.reset();
+  }
+
+  static createGrid(grid) {
+    console.log("CREATING GRID");
     for (var i = 0; i < Grid.getNumRows() * Grid.getNumColumns(); i++) grid.push('empty')
-    grid[this.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn())] = 'yellow'
-    this.placeFoodItem(grid)
+    grid[Logic.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn())] = 'yellow'
+    Logic.placeFoodItem(grid)
     return grid
   }
 
-  step(grid) {
-    Snake.setCurrentDirection(neural.decideMove(grid));
-    this.updateHead(grid)
-    this.updateTail(grid)
+  static step(grid) {
+    Snake.setCurrentDirection(Neural.decideMove(grid));
+    Logic.updateHead(grid)
+    Logic.updateTail(grid)
     return grid
   }
 
 
-  makeGridPosEmpty(grid, index) { grid[index] = 'empty' }
-  makeGridPosYellow(grid, index) { grid[index] = 'yellow' }
-  getGridIndexOf(row, column) { return row * Grid.getNumRows() + column }
+  static makeGridPosEmpty(grid, index) { grid[index] = 'empty' }
+  static makeGridPosYellow(grid, index) { grid[index] = 'yellow' }
+  static getGridIndexOf(row, column) { return row * Grid.getNumRows() + column }
 
-  placeFoodItem(grid) {
+  static placeFoodItem(grid) {
     var foodPlaced = false
     while (!foodPlaced) {
       Food.setFoodRow(Math.floor(Math.random() * Grid.getNumRows()));
@@ -57,7 +56,7 @@ class Logic {
         }
       }
       if (isFoodPositionAvailable) {
-          var gridIndex = this.getGridIndexOf(Food.getFoodRow(), Food.getFoodColumn())
+          var gridIndex = Logic.getGridIndexOf(Food.getFoodRow(), Food.getFoodColumn())
           grid[gridIndex] = 'food'
           foodPlaced = true;
       }
@@ -68,29 +67,28 @@ class Logic {
 
 
 
-  updateHead(grid) {
+  static updateHead(grid) {
     
     for(var i = 0; i < Snake.getSnakeRows().length; i++) {
       if (Snake.nextRow(Snake.getCurrentRow()) === Snake.getSnakeRows()[i] && Snake.nextColumn(Snake.getCurrentColumn()) === Snake.getSnakeColumns()[i]) {
-        window.location.reload();
+        Logic.resetEverything();
       }
     }
     //console.log("currentRow: "+currentRow);
     Snake.setCurrentRow(Snake.nextRow(Snake.getCurrentRow()));
     //console.log("currentRow: "+currentRow);
     Snake.setCurrentColumn(Snake.nextColumn(Snake.getCurrentColumn()));
-    Snake.pushSnakeColumn(Snake.getCurrentColumn());
-    Snake.pushSnakeRow(Snake.getCurrentRow());
-    this.makeGridPosYellow(grid, this.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn()))
+    Snake.pushCurrentLocation();
+    Logic.makeGridPosYellow(grid, Logic.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn()))
   }
 
-  updateTail(grid) {
-    if (Snake.getSnakeRows().length > snakeLength && Snake.getSnakeColumns().length > snakeLength) {
+  static updateTail(grid) {
+    if (Snake.getSnakeRows().length > Snake.getSnakeLength() && Snake.getSnakeColumns().length > Snake.getSnakeLength()) {
       if(Snake.getCurrentRow() === Food.getFoodRow() && Snake.getCurrentColumn() === Food.getFoodColumn()) {
-        snakeLength += 1
-        this.placeFoodItem(grid)
+        Snake.increaseSnakeLength();
+        Logic.placeFoodItem(grid)
       } else {
-        this.makeGridPosEmpty(grid, this.getGridIndexOf(Snake.getSnakeRows()[0], Snake.getSnakeColumns()[0]))
+        Logic.makeGridPosEmpty(grid, Logic.getGridIndexOf(Snake.getSnakeRows()[0], Snake.getSnakeColumns()[0]))
         Snake.removeLastSquare();
       }
     }
@@ -105,30 +103,27 @@ class Logic {
 
 
 
-
   /*keyPressed(event) {
     var tempCurrentDirection = currentDirection
     if(event.keyCode === 37) {
       currentDirection = direction.LEFT
-      currentDirection = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.LEFT
+      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.LEFT
     }
     if(event.keyCode === 38) {
       currentDirection = direction.UP
-      currentDirection = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.UP
+      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.UP
     }
     if(event.keyCode === 39) {
       currentDirection = direction.RIGHT
-      currentDirection = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.RIGHT
+      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.RIGHT
     }
     if(event.keyCode === 40) {
       currentDirection = direction.DOWN
-      currentDirection = (this.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.DOWN
+      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.DOWN
     }
   }*/
 
 }
-
-
 
 
 
@@ -156,21 +151,19 @@ class SquareRender extends React.Component {
   }
 }
 
-var logic
 
 export default class App extends React.Component {
+
   constructor(props) {
     super()
-    logic = new Logic()
-    this.state = {grid: logic.init([])}
+    this.state = {grid: Logic.init([])}
     setInterval(() => this.step(), 80);
   }
 
   step() {
-    this.setState({grid: logic.step(this.state.grid)})
+    this.setState({grid: Logic.step(this.state.grid)})
   }
   
-
   render() {
     return (
       <div className="App">

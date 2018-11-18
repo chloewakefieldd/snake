@@ -1,15 +1,18 @@
 import Grid from "./grid"
 
 var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" };
-
 var currentRow = 0;
 var currentColumn = 0;
-var currentDirection;
-
+var currentDirection = null;
+var snakeLength = 0;
 var snakeRows = [];
 var snakeColumns = [];
 
 export default class Snake {
+
+    static reset() {
+      
+    }
 
     static getCurrentDirection() { return currentDirection; }
     static setCurrentDirection(newDirection) { currentDirection = newDirection; }
@@ -20,6 +23,10 @@ export default class Snake {
     static getCurrentColumn() { return currentColumn; }
     static setCurrentColumn(newColumn) { currentColumn = newColumn; }
 
+    static getSnakeLength() { return snakeLength; }
+    static setSnakeLength(newLength) { snakeLength = newLength; }
+    static increaseSnakeLength() { snakeLength += 1; }
+
     static getSnakeRows() { return snakeRows; }
     static setSnakeRows(newSnakeRows) { snakeRows = newSnakeRows; }
     static pushSnakeRow(newSnakeRow) { snakeRows.push(newSnakeRow); }
@@ -27,6 +34,16 @@ export default class Snake {
     static getSnakeColumns() { return snakeColumns; }
     static setSnakeColumns(newSnakeColumns) { snakeColumns = newSnakeColumns; }
     static pushSnakeColumn(newSnakeColumn) { snakeColumns.push(newSnakeColumn); }
+
+    static setInitialLocation() {
+      Snake.setCurrentRow(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
+      Snake.setCurrentColumn(Math.floor(Math.random() * 2) + Math.floor(Grid.getGridSize()/2));
+    }
+
+    static pushCurrentLocation() {
+      Snake.pushSnakeRow(Snake.getCurrentRow());
+      Snake.pushSnakeColumn(Snake.getCurrentColumn());
+    }
 
     static nextRow(currentRow) {
       if (this.getCurrentDirection() === direction.UP) {

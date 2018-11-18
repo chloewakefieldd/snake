@@ -1,6 +1,6 @@
-var gridSize = 20;
-var numRows = 20;
-var numColumns = 20;
+const gridSize = 20;
+const numRows = 20;
+const numColumns = 20;
 
 export default class Grid {
 

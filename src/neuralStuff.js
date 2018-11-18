@@ -15,7 +15,7 @@ export default class Neural {
         log(weights);
     }
 
-    decideMove(grid) { 
+    static decideMove(grid) { 
         
         this.randomiseWeights();
 
@@ -83,11 +83,11 @@ export default class Neural {
     }
 
 
-    showGrid(grid) {
+    static showGrid(grid) {
         log(grid);
     }
 
-    randomiseWeights() {
+    static randomiseWeights() {
         weights = [];
         for(var i = 0; i < 4; i++) {
             weights.push(zeroto0point99());
@@ -106,7 +106,7 @@ export default class Neural {
     //   Reward for reaching food or punish for hitting snake
     //   Adjust weights
 
-    nextSquareIsOneSnakeSquareBehind() {
+    static nextSquareIsOneSnakeSquareBehind() {
         return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Snake.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Snake.nextColumn(Snake.getCurrentColumn())) ? true : false
     }
 
