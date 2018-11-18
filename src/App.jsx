@@ -12,7 +12,6 @@ class Logic {
     Snake.pushCurrentLocation();
     Snake.setSnakeLength(1);
     grid = Logic.createGrid(grid)
-    /*Logic.keyPressed = Logic.keyPressed.bind(this);*/
     Snake.setCurrentDirection(Neural.decideMove(grid));
     return grid
   }
@@ -74,9 +73,7 @@ class Logic {
         Logic.resetEverything();
       }
     }
-    //console.log("currentRow: "+currentRow);
     Snake.setCurrentRow(Snake.nextRow(Snake.getCurrentRow()));
-    //console.log("currentRow: "+currentRow);
     Snake.setCurrentColumn(Snake.nextColumn(Snake.getCurrentColumn()));
     Snake.pushCurrentLocation();
     Logic.makeGridPosYellow(grid, Logic.getGridIndexOf(Snake.getCurrentRow(), Snake.getCurrentColumn()))
@@ -94,35 +91,6 @@ class Logic {
     }
   }
 
-
- 
-
-
-
-
-
-
-
-  /*keyPressed(event) {
-    var tempCurrentDirection = currentDirection
-    if(event.keyCode === 37) {
-      currentDirection = direction.LEFT
-      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.LEFT
-    }
-    if(event.keyCode === 38) {
-      currentDirection = direction.UP
-      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.UP
-    }
-    if(event.keyCode === 39) {
-      currentDirection = direction.RIGHT
-      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.RIGHT
-    }
-    if(event.keyCode === 40) {
-      currentDirection = direction.DOWN
-      currentDirection = (Logic.nextSquareIsOneSnakeSquareBehind()) ? tempCurrentDirection : direction.DOWN
-    }
-  }*/
-
 }
 
 
@@ -131,10 +99,6 @@ class Logic {
 
 
 class GridRender extends React.Component {
-
-  /*componentDidMount() { document.addEventListener("keydown", logic.keyPressed, false); }
-  componentWillUnmount() { document.removeEventListener("keydown", logic.keyPressed, false); }*/
-  
   render() {
     var renderedGrid = []
     for (var i = 0; i < Grid.getNumRows() * Grid.getNumColumns(); i++) {
