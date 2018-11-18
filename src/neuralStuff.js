@@ -16,19 +16,39 @@ export default class Neural {
     }
 
     static decideMove(grid) { 
-        
+
         this.randomiseWeights();
 
 
+        var lookingUp = () => {
+
+            Snake.getCurrentRow() // might be 7, can go as low as 0 and as high as 6
+
+            var squaresUp = [];
+
+            for(var i = Snake.getCurrentRow() - 1; i >= 0; i--) {
+                var square =  
+                squaresUp.push(square);
+            }
+            
+            
+            return true;
+        }
+        
+        //Snake.oneRowUp(Snake.getCurrentRow()) === Food.getFoodRow();
+        var foodIsDown = Snake.oneRowDown(Snake.getCurrentRow()) === Food.getFoodRow();
+        var foodIsLeft = Snake.oneColumnLeft(Snake.getCurrentColumn()) === Food.getFoodColumn();
+        var foodIsRight = Snake.oneColumnRight(Snake.getCurrentColumn()) === Food.getFoodColumn();
+
+        if(foodIsUp) weights[0] = 1;
+        if(foodIsDown) weights[1] = 1;
+        if(foodIsLeft) weights[2] = 1;
+        if(foodIsRight) weights[3] = 1;
 
 
 
 
-
-
-
-
-        if(Food.getFoodColumn() > Snake.getCurrentColumn()) {
+        /*if(Food.getFoodColumn() > Snake.getCurrentColumn()) {
             weights[3] = 1;
         } else if(Food.getFoodColumn() < Snake.getCurrentColumn()) {
             weights[2] = 1;
@@ -38,16 +58,7 @@ export default class Neural {
             weights[1] = 1;
         } else if(Food.getFoodRow() < Snake.getCurrentRow()) {
             weights[0] = 1;
-        }
-
-
-
-
-
-        
-
-
-
+        }*/
 
 
 
