@@ -10,6 +10,7 @@ class Logic {
   resetNeeded = false;
 
   static init(grid) {
+    Neural.init();
     Snake.setInitialLocation();
     Snake.pushCurrentLocation();
     Snake.setSnakeLength(1);
@@ -128,7 +129,9 @@ export default class App extends React.Component {
   constructor(props) {
     super()
     this.state = {grid: Logic.init([])}
-    setInterval(() => this.step(), 80);
+    //setInterval(() => this.step(), 80);
+    var slowDownMultiplier = 3;
+    setInterval(() => this.step(), 80 * slowDownMultiplier);
   }
 
   step() {

@@ -1,132 +1,168 @@
 import Snake from "./snake"
-import Food from "./food"
-var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT",  RIGHT: "RIGHT" }
+import Grid from "./grid";
+var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT", RIGHT: "RIGHT" }
 
-var weights;
+var inputNeurons = [];
+var weights = [];
+var actionNeurons = [];
 
 export default class Neural {
 
-    constructor() {
-        
-        log("start");
+  static init() {
 
-        this.randomiseWeights();
+    log("start");
 
-        log(weights);
+    this.randomiseWeights();
+    this.randomiseActionNeurons();
+    this.niceLog(weights);
+
+  }
+
+  static randomiseWeights() {
+    weights = [];
+    for (var i = 0; i < Grid.getNumSquares(); i++) {
+      var individualNeuronWeights = [];
+      for (var j = 0; j < 4; j++) {
+        individualNeuronWeights.push(zeroto0point999());
+      }
+      weights.push(individualNeuronWeights);
+    }
+  }
+
+  static randomiseActionNeurons() {
+    actionNeurons = [];
+    for (var i = 0; i < 4; i++) {
+      actionNeurons.push(zeroto0point999());
+    }
+  }
+
+  static setInputNeurons(grid) {
+    inputNeurons = [];
+    for (var i = 0; i < grid.length; i++) {
+      if (grid[i] === 'empty') {
+        inputNeurons.push(0.5);
+      } else if (grid[i] === 'yellow') {
+        inputNeurons.push(0.1);
+      } else if (grid[i] === 'food') {
+        inputNeurons.push(0.9);
+      }
+    }
+    //this.niceLog(inputNeurons);
+  }
+
+  static setActionNeuronValues(grid) {
+    actionNeurons = [];
+    for (var actionIndex = 0; actionIndex < 4; actionIndex++) {
+      var actionValue = 0;
+      for (var i = 0; i < Grid.getNumSquares(); i++) {
+        actionValue += weights[i][actionIndex] * inputNeurons[i];
+      }
+      actionNeurons.push(actionValue);
     }
 
-    static decideMove(grid) { 
+    /*weightedInputs = [];
+    for (var i = 0; i < Grid.getNumSquares(); i++) {
+      weightedInputs.push(reducePrecision(inputNeurons[i] * weights[i]));
+    }*/
+    var actionNeuronString = "actionNeurons: ";
+    for (var j = 0; j < 4; j++) {
+      actionNeuronString += "" +reducePrecision(actionNeurons[j]) + ", ";
+    }
+    log(actionNeuronString);
+  }
 
-        this.randomiseWeights();
+
+  static decideMove(grid) {
+
+    this.setInputNeurons(grid);
+
+    this.setActionNeuronValues(grid);
 
 
-        var lookingUp = () => {
 
-            Snake.getCurrentRow() // might be 7, can go as low as 0 and as high as 6
 
-            var squaresUp = [];
 
-            for(var i = Snake.getCurrentRow() - 1; i >= 0; i--) {
-                var square =  
-                squaresUp.push(square);
-            }
-            
-            
-            return true;
+    // direction with maximum weight
+    var decidedMove = (Object.keys(direction)[actionNeurons.indexOf(Math.max.apply(Math, actionNeurons))]);
+    console.log(decidedMove);
+
+    var biggest = -Infinity;
+    var next_biggest = -Infinity;
+
+    for (var i = 0, n = actionNeurons.length; i < n; ++i) {
+      var nr = +actionNeurons[i]; // convert to number first
+
+      if (nr > biggest) {
+        next_biggest = biggest; // save previous biggest value
+        biggest = nr;
+      } else if (nr < biggest && nr > next_biggest) {
+        next_biggest = nr; // new second biggest value
+      }
+    }
+
+    // direction with second maximum weight
+    var backupMove = Object.keys(direction)[actionNeurons.indexOf(next_biggest)];
+
+
+    // Don't allow snake to go back on itself - use backup move if highest weighting is backwards
+    Snake.setCurrentDirection(decidedMove);
+    decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? backupMove : decidedMove
+
+    return decidedMove;
+
+  }
+
+
+  static niceLog(grid) {
+    //log(grid);
+
+    var tempGrid = [];
+    var gridRow = [];
+
+    for (var i = 0; i < grid.length; i++) {
+
+      //var row = Math.floor(i / Grid.getNumRows());
+      //var column = i % Grid.getNumColumns();
+
+      if (grid[i] === 'empty') {
+        gridRow.push('e');
+      } else if (grid[i] === 'yellow') {
+        gridRow.push('y');
+      } else if (grid[i] === 'food') {
+        gridRow.push('f');
+      } else {
+        gridRow.push(grid[i]);
+      }
+
+      if (i % Grid.getNumColumns() === 7) {
+        //log(gridRow);
+        tempGrid.push(gridRow);
+        gridRow = [];
+      } else if (grid.length < 8) {
+        for (var j = 0; j < grid.length; j++) {
+          tempGrid.push(grid[j]);
         }
-        
-        //Snake.oneRowUp(Snake.getCurrentRow()) === Food.getFoodRow();
-        var foodIsDown = Snake.oneRowDown(Snake.getCurrentRow()) === Food.getFoodRow();
-        var foodIsLeft = Snake.oneColumnLeft(Snake.getCurrentColumn()) === Food.getFoodColumn();
-        var foodIsRight = Snake.oneColumnRight(Snake.getCurrentColumn()) === Food.getFoodColumn();
-
-        if(foodIsUp) weights[0] = 1;
-        if(foodIsDown) weights[1] = 1;
-        if(foodIsLeft) weights[2] = 1;
-        if(foodIsRight) weights[3] = 1;
-
-
-
-
-        /*if(Food.getFoodColumn() > Snake.getCurrentColumn()) {
-            weights[3] = 1;
-        } else if(Food.getFoodColumn() < Snake.getCurrentColumn()) {
-            weights[2] = 1;
-        }
-
-        if(Food.getFoodRow() > Snake.getCurrentRow()) {
-            weights[1] = 1;
-        } else if(Food.getFoodRow() < Snake.getCurrentRow()) {
-            weights[0] = 1;
-        }*/
-
-
-
-        // direction with maximum weight
-        var decidedMove = (Object.keys(direction)[weights.indexOf(Math.max.apply(Math, weights))]);
-
-
-
-        var biggest = -Infinity;
-        var next_biggest = -Infinity;
-        
-        for (var i = 0, n = weights.length; i < n; ++i) {
-            var nr = +weights[i]; // convert to number first
-        
-            if (nr > biggest) {
-                next_biggest = biggest; // save previous biggest value
-                biggest = nr;
-            } else if (nr < biggest && nr > next_biggest) {
-                next_biggest = nr; // new second biggest value
-            }
-        }
-
-        // direction with second maximum weight
-        var backupMove = Object.keys(direction)[weights.indexOf(next_biggest)];
-        
-        
-        // Don't allow snake to go back on itself - use backup move if highest weighting is backwards
-        Snake.setCurrentDirection(decidedMove);
-        decidedMove = (this.nextSquareIsOneSnakeSquareBehind()) ? backupMove : decidedMove
-
-        return decidedMove;
+      }
 
     }
-
-
-    static showGrid(grid) {
-        log(grid);
-    }
-
-    static randomiseWeights() {
-        weights = [];
-        for(var i = 0; i < 4; i++) {
-            weights.push(zeroto0point99());
-        }
-    }
+    log(tempGrid);
+  }
 
 
 
-    // Needs to make a decision based on what it can 'see'
-    // Decision is one of four options: UP, DOWN, LEFT, RIGHT
-    // Needs a weighting for each option
 
-    // INPUT
-    //   Looking forward, left, and right, how far away is snake or food?
-    //   Make a decision
-    //   Reward for reaching food or punish for hitting snake
-    //   Adjust weights
 
-    static nextSquareIsOneSnakeSquareBehind() {
-        return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Snake.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Snake.nextColumn(Snake.getCurrentColumn())) ? true : false
-    }
+  static nextSquareIsOneSnakeSquareBehind() {
+    return (Snake.getSnakeRows()[Snake.getSnakeRows().length - 2] === Snake.nextRow(Snake.getCurrentRow()) && Snake.getSnakeColumns()[Snake.getSnakeColumns().length - 2] === Snake.nextColumn(Snake.getCurrentColumn())) ? true : false
+  }
 
 
 
 }
 
 
+function reducePrecision(num) { return (Math.floor(num * 100)) / 100; }
 
-function zeroto0point99() { return (Math.floor(Math.random() * 100))/100; }
+function zeroto0point999() { return (Math.floor(Math.random() * 1000)) / 1000; }
 
 function log(thing) { console.log(thing); }

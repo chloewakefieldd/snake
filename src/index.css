@@ -1,6 +1,6 @@
 .square {
-    height: 5vw;
-    width: 5vw;
+    height: calc(100vw / 8);
+    width: calc(100vw / 8);
     float: left;
     box-shadow: 0px 0px 1px 1px #55222288;
 }
