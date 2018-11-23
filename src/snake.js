@@ -29,6 +29,8 @@ export default class Snake {
     static getCurrentColumn() { return currentColumn; }
     static setCurrentColumn(newColumn) { currentColumn = newColumn; }
 
+    static getCurrentSquare() { return Snake.getCurrentRow() * Grid.getNumColumns() + Snake.getCurrentColumn(); }
+
     static getSnakeLength() { return snakeLength; }
     static setSnakeLength(newLength) { snakeLength = newLength; }
     static increaseSnakeLength() { snakeLength += 1; }

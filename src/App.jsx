@@ -130,7 +130,7 @@ export default class App extends React.Component {
     super()
     this.state = {grid: Logic.init([])}
     //setInterval(() => this.step(), 80);
-    var slowDownMultiplier = 3;
+    var slowDownMultiplier = 10;
     setInterval(() => this.step(), 80 * slowDownMultiplier);
   }
 

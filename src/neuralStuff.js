@@ -5,6 +5,8 @@ var direction = { UP: "UP", DOWN: "DOWN", LEFT: "LEFT", RIGHT: "RIGHT" }
 var inputNeurons = [];
 var weights = [];
 var actionNeurons = [];
+const extraNeurons = 1; // So it knows the current square
+var numNeurons = 0;
 
 export default class Neural {
 
@@ -12,15 +14,17 @@ export default class Neural {
 
     log("start");
 
+    numNeurons = Grid.getNumSquares() + extraNeurons;
+
     this.randomiseWeights();
     this.randomiseActionNeurons();
-    this.niceLog(weights);
+    log(weights);
 
   }
 
   static randomiseWeights() {
     weights = [];
-    for (var i = 0; i < Grid.getNumSquares(); i++) {
+    for (var i = 0; i < numNeurons; i++) {
       var individualNeuronWeights = [];
       for (var j = 0; j < 4; j++) {
         individualNeuronWeights.push(zeroto0point999());
@@ -38,32 +42,30 @@ export default class Neural {
 
   static setInputNeurons(grid) {
     inputNeurons = [];
-    for (var i = 0; i < grid.length; i++) {
+    for (var i = 0; i < Grid.getNumSquares(); i++) {
       if (grid[i] === 'empty') {
         inputNeurons.push(0.5);
       } else if (grid[i] === 'yellow') {
-        inputNeurons.push(0.1);
+        inputNeurons.push(0.5);
       } else if (grid[i] === 'food') {
-        inputNeurons.push(0.9);
+        inputNeurons.push(0.5);
       }
     }
+    inputNeurons.push(Snake.getCurrentSquare() / Grid.getNumSquares());
+    log(inputNeurons[inputNeurons.length - 1])
     //this.niceLog(inputNeurons);
   }
 
-  static setActionNeuronValues(grid) {
+  static setActionNeuronValues() {
     actionNeurons = [];
     for (var actionIndex = 0; actionIndex < 4; actionIndex++) {
       var actionValue = 0;
-      for (var i = 0; i < Grid.getNumSquares(); i++) {
+      for (var i = 0; i < numNeurons; i++) {
         actionValue += weights[i][actionIndex] * inputNeurons[i];
       }
       actionNeurons.push(actionValue);
     }
 
-    /*weightedInputs = [];
-    for (var i = 0; i < Grid.getNumSquares(); i++) {
-      weightedInputs.push(reducePrecision(inputNeurons[i] * weights[i]));
-    }*/
     var actionNeuronString = "actionNeurons: ";
     for (var j = 0; j < 4; j++) {
       actionNeuronString += "" +reducePrecision(actionNeurons[j]) + ", ";
@@ -76,10 +78,10 @@ export default class Neural {
 
     this.setInputNeurons(grid);
 
-    this.setActionNeuronValues(grid);
+    this.setActionNeuronValues();
 
-
-
+    var currentSquare = Snake.getCurrentSquare();
+    log(currentSquare);
 
 
     // direction with maximum weight
@@ -119,7 +121,7 @@ export default class Neural {
     var tempGrid = [];
     var gridRow = [];
 
-    for (var i = 0; i < grid.length; i++) {
+    for (var i = 0; i < numNeurons; i++) {
 
       //var row = Math.floor(i / Grid.getNumRows());
       //var column = i % Grid.getNumColumns();

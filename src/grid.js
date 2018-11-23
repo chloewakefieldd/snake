@@ -1,7 +1,7 @@
-const gridSize = 8;
-const numRows = 8;
-const numColumns = 8;
-const numSquares = 64;
+const gridSize = 5;
+const numRows = 5;
+const numColumns = 5;
+const numSquares = 25;
 
 export default class Grid {
 
